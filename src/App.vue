@@ -12,47 +12,38 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, onMounted } from 'vue';
 import Header from './components/Header.vue';
 import Todos from './components/Todos.vue';
 import Posts from './components/Posts.vue';
 
-export default {
-  components: {
-    Header,
-    Todos,
-    Posts
-  },
-  data() {
-    return {
-      activeMenu: 'todos', // Default menu aktif adalah Todos
-      todos: [], // Data todos Anda
-      posts: [], // Data postingan Anda
-      users: [] // Data user Anda
-    }
-  },
-  methods: {
-    handleMenuClick(menu) {
-      this.activeMenu = menu;
-    }
-  },
-  mounted() {
-    // Ambil data todos dari sumber Anda (misalnya API)
-    fetch('https://jsonplaceholder.typicode.com/todos')
-      .then(response => response.json())
-      .then(json => this.todos = json);
+const activeMenu = ref('todos'); 
+const todos = ref([]); 
+const posts = ref([]); 
+const users = ref([]); 
 
-    // Ambil data postingan dari sumber Anda (misalnya API)
-    fetch('https://jsonplaceholder.typicode.com/posts')
-      .then(response => response.json())
-      .then(json => this.posts = json);
+const handleMenuClick = (menu) => {
+  activeMenu.value = menu;
+};
 
-    // Ambil data user dari sumber Anda (misalnya API)
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then(response => response.json())
-      .then(json => this.users = json);
-  }
-}
+// Fetch data on mount
+onMounted(() => {
+  // Ambil data todos dari sumber Anda (misalnya API)
+  fetch('https://jsonplaceholder.typicode.com/todos')
+    .then(response => response.json())
+    .then(json => todos.value = json);
+
+  // Ambil data postingan dari sumber Anda (misalnya API)
+  fetch('https://jsonplaceholder.typicode.com/posts')
+    .then(response => response.json())
+    .then(json => posts.value = json);
+
+  // Ambil data user dari sumber Anda (misalnya API)
+  fetch('https://jsonplaceholder.typicode.com/users')
+    .then(response => response.json())
+    .then(json => users.value = json);
+});
 </script>
 
 <style>

@@ -1,8 +1,9 @@
 <template>
-    <h1 class="mt-3 text-center">To Do List App - UTS</h1>
-    <h2 class="mt-3 text-center">My Activity Schedule @nurasyifah_</h2>
+  <div>
+    <h1 class="mt-3 text-center">{{ title }}</h1>
+    <h2 class="mt-3 text-center">{{ subtitle }}</h2>
     <div class="container">
-  
+      <slot name="before-inputs"></slot>
       <div class="row justify-content-center">
         <div class="col-9 mt-5">
           <div class="row">
@@ -21,84 +22,93 @@
           </div>
         </div>  
       </div>
-  
+      <slot name="after-inputs"></slot>
       <div class="row justify-content-center">
         <div class="col-10 mt-5">
           <div v-for="(item, index) in filteredTodoList" :key="index" class="p-3" style="border-bottom: solid 1px #ddd;">
             <div class="btn-actions">
-            <button class="btn btn-outline-danger me-3" @click="deleteTodo(index)">cancel</button>
-            <button class="btn btn-success me-3" @click="markAsDone(index)">done</button>
-            <input type="checkbox" v-model="item.done">
-            <span :class="{ 'done-item': item.done }">{{item.start}} - {{item.end}} : {{item.text}}</span>
+              <button class="btn btn-outline-danger me-3" @click="deleteTodo(index)">cancel</button>
+              <button class="btn btn-success me-3" @click="markAsDone(index)">done</button>
+              <input type="checkbox" v-model="item.done">
+              <span :class="{ 'done-item': item.done }">{{item.start}} - {{item.end}} : {{item.text}}</span>
             </div>
           </div>
         </div>
       </div>
       <button class="btn btn-primary mt-3" @click="showIncomplete = !showIncomplete" style="margin-top: 10px;">
-      {{ showIncomplete ? 'show all list' : 'list not completed' }}
+        {{ showIncomplete ? 'show all list' : 'list not completed' }}
       </button>
+      <slot name="after-list"></slot>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        todoList: [
-          { text: 'Learning Object-Oriented Programming', start: '09:00', end: '10:40', done: false },
-          { text: 'Learning Computer Networking', start: '10:45', end: '12:25', done: false },
-          { text: 'Learning Digital Electronics', start: '13:15', end: '14:55', done: false },
-          { text: 'Learning Component-Based Programming', start: '07:15', end: '08:55', done: false },
-          { text: 'Learning Computer Graphics Lab', start: '09:00', end: '10:40', done: false },
-          { text: 'Learning Analysis and Design Algorithm', start: '10:45', end: '12:25', done: false },
-          { text: 'Learning Computer Graphics', start: '15:00', end: '16:40', done: false },
-          { text: 'Learning Human and Computer Interaction', start: '07:15', end: '09:45', done: false },
-          { text: 'Learning Object-Oriented Programming Lab', start: '10:45', end: '12:25', done: false },
-          { text: 'Learning Analysis and Design Algorithm Lab', start: '07:15', end: '08:55', done: false },
-          { text: 'Learning Computer Networking Lab', start: '10:45', end: '12:25', done: false },
-          { text: 'Learning Discrete Mathematics of Informatics', start: '13:15', end: '15:45', done: false },
-          { text: 'Learning Digital Electronics Lab', start: '13:30', end: '15:10', done: false },
-          { text: 'Learning Component-Based Programming Lab', start: '15:15', end: '16:55', done: false },
-        ],
-        startTime: '',
-        endTime: '',
-        activity: '',
-        showIncomplete: false
-      };
-    },
-    methods: {
-      deleteTodo(index) {
-        this.todoList.splice(index, 1);
-      },
-      markAsDone(index) {
-        this.todoList[index].done = true;
-      },
-      addTodo() {
-        let newItem = {
-          text: this.activity,
-          start: this.startTime,
-          end: this.endTime,
-          done: false
-        };
-        this.todoList.push(newItem);
-        this.activity = '';
-        this.startTime = '';
-        this.endTime = '';
-      }
-    },
-    computed: {
-    filteredTodoList() {
-      if (this.showIncomplete) {
-        return this.todoList.filter(item => !item.done);
-      } else {
-        return this.todoList;
-      }
-    }
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue';
+
+const props = defineProps({
+  title: {
+    type: String,
+    default: 'To Do List App - UTS'
+  },
+  subtitle: {
+    type: String,
+    default: 'My Activity Schedule @nurasyifah_'
   }
+});
+
+const todoList = ref([
+  { text: 'Learning Object-Oriented Programming', start: '09:00', end: '10:40', done: false },
+  { text: 'Learning Computer Networking', start: '10:45', end: '12:25', done: false },
+  { text: 'Learning Digital Electronics', start: '13:15', end: '14:55', done: false },
+  { text: 'Learning Component-Based Programming', start: '07:15', end: '08:55', done: false },
+  { text: 'Learning Computer Graphics Lab', start: '09:00', end: '10:40', done: false },
+  { text: 'Learning Analysis and Design Algorithm', start: '10:45', end: '12:25', done: false },
+  { text: 'Learning Computer Graphics', start: '15:00', end: '16:40', done: false },
+  { text: 'Learning Human and Computer Interaction', start: '07:15', end: '09:45', done: false },
+  { text: 'Learning Object-Oriented Programming Lab', start: '10:45', end: '12:25', done: false },
+  { text: 'Learning Analysis and Design Algorithm Lab', start: '07:15', end: '08:55', done: false },
+  { text: 'Learning Computer Networking Lab', start: '10:45', end: '12:25', done: false },
+  { text: 'Learning Discrete Mathematics of Informatics', start: '13:15', end: '15:45', done: false },
+  { text: 'Learning Digital Electronics Lab', start: '13:30', end: '15:10', done: false },
+  { text: 'Learning Component-Based Programming Lab', start: '15:15', end: '16:55', done: false },
+]);
+const startTime = ref('');
+const endTime = ref('');
+const activity = ref('');
+const showIncomplete = ref(false);
+
+const addTodo = () => {
+  let newItem = {
+    text: activity.value,
+    start: startTime.value,
+    end: endTime.value,
+    done: false
   };
-  </script>
-  
-  <style>
+  todoList.value.push(newItem);
+  activity.value = '';
+  startTime.value = '';
+  endTime.value = '';
+};
+
+const deleteTodo = (index) => {
+  todoList.value.splice(index, 1);
+};
+
+const markAsDone = (index) => {
+  todoList.value[index].done = true;
+};
+
+const filteredTodoList = computed(() => {
+  if (showIncomplete.value) {
+    return todoList.value.filter(item => !item.done);
+  } else {
+    return todoList.value;
+  }
+});
+</script>
+
+<style>
   body {
     background-color: skyblue;
   }
